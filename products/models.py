@@ -15,6 +15,10 @@ class Product(models.Model):
         db_table="products"
         verbose_name=_("product")
         verbose_name_plural=_("products")
+        
+        
+    def __str__(self):
+            return self.title    
     
     
 
@@ -32,12 +36,28 @@ class Category(models.Model):
         verbose_name=_("category")
         verbose_name_plural=_("categories")
         
+         
+    def __str__(self):
+         return self.title
+                
+
+        
     
     
 class File(models.Model):
-    product=models.ForeignKey("Product",verbose_name=_("product"),on_delete=models.CASCADE)
+    FILE_AUDIO=1
+    FILE_VIDEO=2
+    FILE_PDF=3
+    FILE_TYPES=(
+        (FILE_AUDIO,_("audio")),
+        (FILE_VIDEO,_("video")),
+        (FILE_PDF,_("pdf")),
+    )  
+    
+    product=models.ForeignKey("Product",verbose_name=_("product"),related_name="files",on_delete=models.CASCADE)
     title=models.CharField(("title"),max_length=50)
     file=models.FileField(("file"),upload_to="files/%Y/%m/%d/")
+    file_type=models.PositiveSmallIntegerField(_("file type"),choices=FILE_TYPES,default=FILE_VIDEO)
     is_enable=models.BooleanField(_("is enable"),default=True)
     created_time=models.DateTimeField(("created time"),auto_now_add=True)
     updated_time=models.DateTimeField(_("updated time"),auto_now=True)
@@ -47,4 +67,7 @@ class File(models.Model):
             verbose_name=_("file")
             verbose_name_plural=_("files")
         
+        
+    def __str__(self):
+            return self.title    
 # Create your models here.

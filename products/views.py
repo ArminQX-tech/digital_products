@@ -6,14 +6,21 @@ from rest_framework import status
 from .models import File, Product,Category
 from .serializers import ProductSerializer,CategorySerializer,FileSerializer
 
+from rest_framework.permissions import IsAuthenticated 
+
+
 class ProductListView(APIView):
+
     
     def get(self,request):
+        print(request.user)
+        print(request.auth)
         products=Product.objects.all()
         serializer=ProductSerializer(products,many=True,context={'request':request})#contex let us to see absoloute url
         return Response(serializer.data) 
 
 class CategoryListView(APIView):
+    permission_classes=[IsAuthenticated]
     
     def get(self,request):
         categories=Category.objects.all()

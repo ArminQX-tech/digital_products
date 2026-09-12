@@ -1,9 +1,11 @@
 from django.shortcuts import render
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import status  
+from rest_framework import status
 
 from .models import File, Product,Category
+from subscriptions.models import Subscription
 from .serializers import ProductSerializer,CategorySerializer,FileSerializer
 
 from rest_framework.permissions import IsAuthenticated 
@@ -30,6 +32,11 @@ class CategoryListView(APIView):
     
 class ProductDetailView(APIView):
     def get(self,request,pk):
+        if not Subscription.objects.filter(
+            user=request.user,
+            expire_time__gt=timezone.now()
+        ).exists():
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         try:
             product=Product.objects.get(pk=pk)
         except Product.DoesNotExist:
